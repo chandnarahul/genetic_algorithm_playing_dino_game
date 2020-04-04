@@ -40,7 +40,7 @@ public class RunFirefox {
                     }
                 } else if (dinoSensor.isObjectFlying()) {
                     if (dinoSensor.distanceFromObject() <= 80) {
-                        driver.findElementById("t").sendKeys(Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU);
+                        driver.findElementById("t").sendKeys(Keys.DOWN);
                     }
                 }
 
