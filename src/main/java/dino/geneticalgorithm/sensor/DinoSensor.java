@@ -1,6 +1,10 @@
 package dino.geneticalgorithm.sensor;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
 
 public class DinoSensor {
     public static final int MINIMUM_CONNECTED_PIXELS = 5;
@@ -12,8 +16,13 @@ public class DinoSensor {
     private final int DINO_X_AXIS = 62;
     private final int DINO_Y_AXIS = 95;
 
-    public DinoSensor(BufferedImage bufferedImage) {
+    protected DinoSensor(BufferedImage bufferedImage) {
         this.image = removeDinoFloorAndSkyFromImage(bufferedImage);
+        try {
+            ImageIO.write(image, "png", new File("test.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         findObjects();
     }
 
@@ -21,6 +30,10 @@ public class DinoSensor {
         int buffer = 4;
         image = image.getSubimage(DINO_X_AXIS + buffer, DINO_Y_AXIS, image.getWidth() / 2 - 50, image.getHeight() - 120);
         return image;
+    }
+
+    public DataBufferByte imageDataBuffer() {
+        return (DataBufferByte) image().getRaster().getDataBuffer();
     }
 
     public BufferedImage image() {
@@ -35,7 +48,7 @@ public class DinoSensor {
         return isObjectCloserToTheGround;
     }
 
-    public long getDistanceFromObject() {
+    public long distanceFromObject() {
         return distanceFromObject;
     }
 

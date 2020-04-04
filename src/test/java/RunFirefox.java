@@ -1,3 +1,4 @@
+import dino.geneticalgorithm.sensor.DinoSensorInteraction;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -8,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 public class RunFirefox {
 
@@ -21,22 +21,20 @@ public class RunFirefox {
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         firefoxOptions.setBinary(firefoxBinary);
         FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
-        String resource = RunFirefox.class.getResource("/T-RexGame.html").toExternalForm().replace(":/",":///");
+        String resource = RunFirefox.class.getResource("/T-RexGame.html").toExternalForm().replace(":/", ":///");
         driver.get(resource);
         Thread.sleep(1000);
         try {
-/*
             WebElement ele = driver.findElement(By.id("gamecanvas"));
             Point point = ele.getLocation();
             driver.findElementById("t").sendKeys(Keys.SPACE);
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 100; i++) {
                 BufferedImage image = ImageIO.read(takeScreenshot(driver)).getSubimage(point.getX(), point.getY(), ele.getSize().getWidth(), ele.getSize().getHeight());
+                new DinoSensorInteraction(image).sensor();
                 final byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                System.out.println("screenshot start");
                 ImageIO.write(image, "png", new File("images/game" + i + ".png"));
-                System.out.println("wrote image");
                 Thread.sleep(100);
-            }*/
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

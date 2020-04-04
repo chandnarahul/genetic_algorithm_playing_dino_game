@@ -19,7 +19,7 @@ public class DinoSensorTest {
     @Test
     public void should_return_flyingObject_distance() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(DinoSensorTest.class.getResourceAsStream("/bird_flying_high_and_other_objects.png")));
-        assertEquals(96, dinoSensor.getDistanceFromObject());
+        assertEquals(96, dinoSensor.distanceFromObject());
     }
 
     @Test
@@ -31,6 +31,6 @@ public class DinoSensorTest {
     @Test
     public void should_return_groundObject_distance() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(DinoSensorTest.class.getResourceAsStream("/all_objects_closer_to_the_ground.png")));
-        assertEquals(145, dinoSensor.getDistanceFromObject());
+        assertEquals(145, dinoSensor.distanceFromObject());
     }
 }
