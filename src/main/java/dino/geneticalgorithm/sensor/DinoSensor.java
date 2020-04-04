@@ -12,7 +12,7 @@ public class DinoSensor {
 
     private boolean isObjectFlying = Boolean.FALSE;
     private boolean isObjectCloserToTheGround = Boolean.FALSE;
-    private long distanceFromObject = 0;
+    private int distanceFromObject = 0;
     private final int DINO_X_AXIS = 62;
     private final int DINO_Y_AXIS = 95;
 
@@ -61,61 +61,40 @@ public class DinoSensor {
         return isObjectCloserToTheGround;
     }
 
-    public long distanceFromObject() {
+    public int distanceFromObject() {
         return distanceFromObject;
     }
 
     private void findObjects() {
+        boolean up = false;
+        boolean bottom = false;
+        int upPixel = 0, bottomPixel = 0;
         for (int i = 0; i < image.getWidth(); i++) {
-            for (int k = 0; k < image.getHeight(); k++) {
-                if (isGrayPixel(i, k)) {
-                    int skyConnectedPixelsCount = 0;
-                    for (int j = k; j < k + 5; j++) {
-                        if (isGrayPixel(i, j)) {
-                            skyConnectedPixelsCount += 1;
-                            if (isObjectTouchingTheSky(skyConnectedPixelsCount)) {
-                                if (isObjectTouchingTheGroundAsWell(i)) {
-                                    isObjectCloserToTheGround = Boolean.TRUE;
-                                } else {
-                                    isObjectFlying = Boolean.TRUE;
-                                }
-                                distanceFromObject = Math.round(Math.sqrt(Math.pow(i - DINO_X_AXIS, 2) + Math.pow(j - DINO_Y_AXIS, 2)));
-                                return;
-                            } else if (isObjectTouchingTheGroundAsWell(i)) {
-                                isObjectCloserToTheGround = Boolean.TRUE;
-                                distanceFromObject = Math.round(Math.sqrt(Math.pow(i - DINO_X_AXIS, 2) + Math.pow(j - DINO_Y_AXIS, 2)));
-                                return;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
+            if (up || bottom) {
+                break;
+            }
+            if (isGrayPixel(i, 0)) {
+                up = true;
+                upPixel = i;
+            }
+            for (int yAxisBottomUp = image.getHeight() - 1; yAxisBottomUp > 0; yAxisBottomUp--) {
+                if (isGrayPixel(i, yAxisBottomUp)) {
+                    bottom = true;
+                    upPixel = i;
+                    bottomPixel = yAxisBottomUp;
                 }
             }
         }
-    }
-
-    private boolean isObjectTouchingTheSky(int skyConnectedPixelsCount) {
-        return skyConnectedPixelsCount == MINIMUM_CONNECTED_PIXELS;
-    }
-
-    private boolean isObjectTouchingTheGroundAsWell(int xAxis) {
-        int groundConnectedPixelsCount = 0;
-        for (int yAxisBottomUp = image.getHeight() - 1; yAxisBottomUp > image.getHeight() - 1 - MINIMUM_CONNECTED_PIXELS; yAxisBottomUp--) {
-            if (isGrayPixel(xAxis, yAxisBottomUp)) {
-                groundConnectedPixelsCount += 1;
-                if (isObjectTouchingTheGround(groundConnectedPixelsCount)) {
-                    return Boolean.TRUE;
-                }
-            } else {
-                return Boolean.FALSE;
-            }
+        if (up && bottom) {
+            this.isObjectCloserToTheGround = Boolean.TRUE;
+        } else if (bottom) {
+            this.isObjectCloserToTheGround = Boolean.TRUE;
+        } else if (up) {
+            this.isObjectFlying = Boolean.TRUE;
         }
-        return Boolean.FALSE;
-    }
-
-    private boolean isObjectTouchingTheGround(int groundConnectedPixelsCount) {
-        return groundConnectedPixelsCount == MINIMUM_CONNECTED_PIXELS;
+        if (up || bottom) {
+            distanceFromObject = upPixel;
+        }
     }
 
     private boolean isGrayPixel(int xAxis, int yAxisBottomUp) {

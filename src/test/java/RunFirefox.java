@@ -4,6 +4,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -23,23 +25,23 @@ public class RunFirefox {
         FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
         String resource = RunFirefox.class.getResource("/T-RexGame.html").toExternalForm().replace(":/", ":///");
         driver.get(resource);
-        Thread.sleep(5000);
+        Thread.sleep(1000);
         try {
             WebElement ele = driver.findElement(By.id("gamecanvas"));
             Point point = ele.getLocation();
-            driver.findElementById("t").sendKeys(Keys.SPACE);
+            driver.findElementById("t").sendKeys(Keys.UP);
             int i = 0;
             do {
                 BufferedImage image = ImageIO.read(takeScreenshot(driver)).getSubimage(point.getX(), point.getY(), ele.getSize().getWidth(), ele.getSize().getHeight());
                 DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
                 if (dinoSensor.isObjectCloserToTheGround()) {
-                    System.out.println(dinoSensor.distanceFromObject());
-                    if (dinoSensor.distanceFromObject() <= 98) {
-                        driver.findElementById("t").sendKeys(Keys.SPACE);
+                    if (dinoSensor.distanceFromObject() <= 80) {
+                        driver.findElementById("t").sendKeys(Keys.SPACE, Keys.SPACE, Keys.SPACE, Keys.SPACE);
                     }
+                }else if(dinoSensor.isObjectFlying()){
                 }
-                ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
-                i++;
+                //ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
+                //i++;
             } while (Boolean.TRUE);
         } catch (Exception e) {
             e.printStackTrace();
