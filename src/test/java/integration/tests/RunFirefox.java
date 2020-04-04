@@ -1,11 +1,11 @@
+package integration.tests;
+
 import dino.geneticalgorithm.sensor.DinoSensor;
 import dino.geneticalgorithm.sensor.DinoSensorInteraction;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -29,7 +29,7 @@ public class RunFirefox {
         try {
             WebElement ele = driver.findElement(By.id("gamecanvas"));
             Point point = ele.getLocation();
-            driver.findElementById("t").sendKeys(Keys.UP);
+            driver.findElementById("t").sendKeys(Keys.SPACE);
             int i = 0;
             do {
                 BufferedImage image = ImageIO.read(takeScreenshot(driver)).getSubimage(point.getX(), point.getY(), ele.getSize().getWidth(), ele.getSize().getHeight());
@@ -38,8 +38,12 @@ public class RunFirefox {
                     if (dinoSensor.distanceFromObject() <= 80) {
                         driver.findElementById("t").sendKeys(Keys.SPACE, Keys.SPACE, Keys.SPACE, Keys.SPACE);
                     }
-                }else if(dinoSensor.isObjectFlying()){
+                } else if (dinoSensor.isObjectFlying()) {
+                    if (dinoSensor.distanceFromObject() <= 80) {
+                        driver.findElementById("t").sendKeys(Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU, Keys.ZENKAKU_HANKAKU);
+                    }
                 }
+
                 //ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
                 //i++;
             } while (Boolean.TRUE);

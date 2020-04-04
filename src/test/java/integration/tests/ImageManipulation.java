@@ -1,13 +1,12 @@
-import javax.imageio.ImageIO;
+package integration.tests;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
-import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 public class ImageManipulation {
     private static BufferedImage gerGreyScaleImageViaGraphics(BufferedImage image) {
