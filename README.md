@@ -1,1 +1,1 @@
-# chandnarahul-genetic_algorithm_playing_dino_game
+# genetic_algorithm_playing_dino_game
