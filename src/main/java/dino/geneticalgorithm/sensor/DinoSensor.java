@@ -26,10 +26,23 @@ public class DinoSensor {
         findObjects();
     }
 
+    protected DinoSensor(BufferedImage bufferedImage, boolean removeDino) {
+        if (removeDino) {
+            this.image = removeDinoFloorAndSkyFromImage(bufferedImage);
+        } else {
+            this.image = bufferedImage;
+        }
+        try {
+            ImageIO.write(image, "png", new File("test.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        findObjects();
+    }
+
     private BufferedImage removeDinoFloorAndSkyFromImage(BufferedImage image) {
         int buffer = 4;
-        image = image.getSubimage(DINO_X_AXIS + buffer, DINO_Y_AXIS, image.getWidth() / 2 - 50, image.getHeight() - 120);
-        return image;
+        return image.getSubimage(DINO_X_AXIS + buffer, DINO_Y_AXIS, image.getWidth() / 2 - 50, image.getHeight() - 120);
     }
 
     public DataBufferByte imageDataBuffer() {
@@ -54,22 +67,28 @@ public class DinoSensor {
 
     private void findObjects() {
         for (int i = 0; i < image.getWidth(); i++) {
-            if (isGrayPixel(i, 0)) {
-                int skyConnectedPixelsCount = 0;
-                for (int j = 0; j < 5; j++) {
-                    if (isGrayPixel(i, j)) {
-                        skyConnectedPixelsCount += 1;
-                        if (isObjectTouchingTheSky(skyConnectedPixelsCount)) {
-                            if (isObjectTouchingTheGroundAsWell(i)) {
+            for (int k = 0; k < image.getHeight(); k++) {
+                if (isGrayPixel(i, k)) {
+                    int skyConnectedPixelsCount = 0;
+                    for (int j = k; j < k + 5; j++) {
+                        if (isGrayPixel(i, j)) {
+                            skyConnectedPixelsCount += 1;
+                            if (isObjectTouchingTheSky(skyConnectedPixelsCount)) {
+                                if (isObjectTouchingTheGroundAsWell(i)) {
+                                    isObjectCloserToTheGround = Boolean.TRUE;
+                                } else {
+                                    isObjectFlying = Boolean.TRUE;
+                                }
+                                distanceFromObject = Math.round(Math.sqrt(Math.pow(i - DINO_X_AXIS, 2) + Math.pow(j - DINO_Y_AXIS, 2)));
+                                return;
+                            } else if (isObjectTouchingTheGroundAsWell(i)) {
                                 isObjectCloserToTheGround = Boolean.TRUE;
-                            } else {
-                                isObjectFlying = Boolean.TRUE;
+                                distanceFromObject = Math.round(Math.sqrt(Math.pow(i - DINO_X_AXIS, 2) + Math.pow(j - DINO_Y_AXIS, 2)));
+                                return;
                             }
-                            distanceFromObject = Math.round(Math.sqrt(Math.pow(i - DINO_X_AXIS, 2) + Math.pow(j - DINO_Y_AXIS, 2)));
-                            return;
+                        } else {
+                            break;
                         }
-                    } else {
-                        break;
                     }
                 }
             }
@@ -101,6 +120,7 @@ public class DinoSensor {
 
     private boolean isGrayPixel(int xAxis, int yAxisBottomUp) {
         final int grayScale = 90;
-        return (image.getRGB(xAxis, yAxisBottomUp) & 0xFF) < grayScale;
+        int pixel = image.getRGB(xAxis, yAxisBottomUp) & 0xFF;
+        return pixel < grayScale;
     }
 }

@@ -3,6 +3,7 @@ package dino.geneticalgorithm.sensor;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -25,6 +26,12 @@ public class DinoSensorTest {
     @Test
     public void should_identify_object_closer_to_the_ground() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(DinoSensorTest.class.getResourceAsStream("/all_objects_closer_to_the_ground.png")));
+        assertTrue(dinoSensor.isObjectCloserToTheGround());
+    }
+
+    @Test
+    public void should_identify_mini_object_closer_to_the_ground() throws IOException {
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(DinoSensorTest.class.getResourceAsStream("/mini_objects.png")),Boolean.FALSE);
         assertTrue(dinoSensor.isObjectCloserToTheGround());
     }
 
