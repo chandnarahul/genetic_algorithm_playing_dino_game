@@ -1,3 +1,5 @@
+package dino.geneticalgorithm.sensor;
+
 import java.awt.image.BufferedImage;
 
 public class DinoSensor {
