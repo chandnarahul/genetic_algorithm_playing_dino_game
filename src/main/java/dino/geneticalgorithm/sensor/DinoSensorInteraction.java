@@ -1,5 +1,7 @@
 package dino.geneticalgorithm.sensor;
 
+import dino.geneticalgorithm.sensor.exception.GameOverException;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
@@ -9,12 +11,12 @@ import java.util.List;
 public class DinoSensorInteraction {
 
     public static final int MAX_COMMON_IMAGES = 5;
-    private static final List<DataBufferByte> imageBuffers = new ArrayList<>(MAX_COMMON_IMAGES);
+    private static final List<DinoSensor> imageBuffers = new ArrayList<>(MAX_COMMON_IMAGES);
     private final DinoSensor dinoSensor;
 
     public DinoSensorInteraction(BufferedImage image) {
         this.dinoSensor = new DinoSensor(image);
-        imageBuffers.add(dinoSensor.imageDataBuffer());
+        imageBuffers.add(dinoSensor);
         stopExecutionIfNoNewImageIsReceived();
     }
 
@@ -24,15 +26,15 @@ public class DinoSensorInteraction {
 
     private void stopExecutionIfNoNewImageIsReceived() {
         if (imageBuffers.size() == MAX_COMMON_IMAGES) {
-            throw new RuntimeException("game over");
-        }
-        else if (ifUniqueImage()) {
+            throw new GameOverException("game over", dinoSensor);
+        } else if (ifUniqueImage()) {
             imageBuffers.clear();
         }
     }
 
     private boolean ifUniqueImage() {
-        for (DataBufferByte dataBufferByte : imageBuffers) {
+        for (DinoSensor previous : imageBuffers) {
+            DataBufferByte dataBufferByte = previous.imageDataBuffer();
             for (int dataBanks = 0; dataBanks < dataBufferByte.getNumBanks(); dataBanks++) {
                 if (Arrays.equals(dinoSensor.imageDataBuffer().getData(dataBanks), dataBufferByte.getData(dataBanks))) {
                     return Boolean.FALSE;

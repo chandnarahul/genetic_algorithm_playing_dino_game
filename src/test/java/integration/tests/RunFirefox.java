@@ -2,6 +2,7 @@ package integration.tests;
 
 import dino.geneticalgorithm.sensor.DinoSensor;
 import dino.geneticalgorithm.sensor.DinoSensorInteraction;
+import dino.geneticalgorithm.sensor.exception.GameOverException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -29,25 +30,25 @@ public class RunFirefox {
         try {
             WebElement ele = driver.findElement(By.id("gamecanvas"));
             Point point = ele.getLocation();
-            driver.findElementById("t").sendKeys(Keys.SPACE);
+            driver.findElementByTagName("body").sendKeys(Keys.UP);
             int i = 0;
             do {
                 BufferedImage image = ImageIO.read(takeScreenshot(driver)).getSubimage(point.getX(), point.getY(), ele.getSize().getWidth(), ele.getSize().getHeight());
                 DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
-                if (dinoSensor.isObjectCloserToTheGround()) {
-                    if (dinoSensor.distanceFromObject() <= 80) {
-                        driver.findElementById("t").sendKeys(Keys.SPACE, Keys.SPACE, Keys.SPACE, Keys.SPACE);
+                if (dinoSensor.isAnyObjectFound()) {
+                    if (dinoSensor.distanceFromObject() <= 90) {
+                        driver.findElementByTagName("body").sendKeys(Keys.UP);
                     }
-                } else if (dinoSensor.isObjectFlying()) {
-                    if (dinoSensor.distanceFromObject() <= 80) {
-                        driver.findElementById("t").sendKeys(Keys.DOWN);
-                    }
+                }else{
+                    driver.findElementByTagName("body").sendKeys(Keys.DOWN);
                 }
-
                 //ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
                 //i++;
             } while (Boolean.TRUE);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            if (e instanceof GameOverException) {
+                ImageIO.write(((GameOverException) e).getDinoSensor().image(), "png", new File("images/game.png"));
+            }
             e.printStackTrace();
         } finally {
             driver.quit();
