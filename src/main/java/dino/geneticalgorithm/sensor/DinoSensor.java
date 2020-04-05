@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 public class DinoSensor {
     public static final int MINIMUM_CONNECTED_PIXELS = 5;
@@ -14,16 +13,22 @@ public class DinoSensor {
     private boolean isObjectFlying = Boolean.FALSE;
     private boolean isObjectCloserToTheGround = Boolean.FALSE;
     private int distanceFromObject = 0;
-    private long frameWasReceivedOn = new Date().getTime();
+    private double speed;
     private final int DINO_X_AXIS = 62;
     private final int DINO_Y_AXIS = 95;
 
     protected DinoSensor(BufferedImage bufferedImage) {
+        this(bufferedImage, 0);
+    }
+
+    protected DinoSensor(BufferedImage bufferedImage, double speed) {
         this.image = removeDinoFloorAndSkyFromImage(bufferedImage);
+        this.speed = speed;
         findObjects();
     }
 
     protected DinoSensor(BufferedImage bufferedImage, boolean removeDino) {
+        this.speed = 0;
         if (removeDino) {
             this.image = removeDinoFloorAndSkyFromImage(bufferedImage);
         } else {
@@ -69,19 +74,19 @@ public class DinoSensor {
     private void findObjects() {
         boolean up = false;
         boolean bottom = false;
-        int upPixel = 0;
+        int objectPixel = 0;
         for (int i = 0; i < image.getWidth(); i++) {
             if (up || bottom) {
                 break;
             }
             if (isGrayPixel(i, 0)) {
                 up = true;
-                upPixel = i;
+                objectPixel = i;
             }
             for (int yAxisBottomUp = image.getHeight() - 1; yAxisBottomUp > 0; yAxisBottomUp--) {
                 if (isGrayPixel(i, yAxisBottomUp)) {
                     bottom = true;
-                    upPixel = i;
+                    objectPixel = i;
                 }
             }
         }
@@ -93,9 +98,9 @@ public class DinoSensor {
             this.isObjectFlying = Boolean.TRUE;
         }
         if (isObjectFlying) {
-            distanceFromObject = upPixel + 15;
+            distanceFromObject = objectPixel - DINO_X_AXIS;
         } else if (isObjectCloserToTheGround) {
-            distanceFromObject = upPixel + 5;
+            distanceFromObject = objectPixel - DINO_X_AXIS;
         }
     }
 
@@ -105,7 +110,11 @@ public class DinoSensor {
         return pixel < grayScale;
     }
 
-    public long timeFrameWasReceivedOn() {
-        return frameWasReceivedOn;
+    public double speed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 }
