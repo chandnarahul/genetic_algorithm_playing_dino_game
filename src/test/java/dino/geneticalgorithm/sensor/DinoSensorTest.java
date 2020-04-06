@@ -30,13 +30,13 @@ public class DinoSensorTest {
 
     @Test
     public void should_identify_mini_object_closer_to_the_ground_1() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/mini_objects.png")), Boolean.FALSE);
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/mini_objects.png")));
         assertTrue(dinoSensor.isObjectCloserToTheGround());
     }
 
     @Test
     public void should_identify_mini_object_closer_to_the_ground_2() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/game67.png")), Boolean.FALSE);
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/game67.png")));
         assertTrue(dinoSensor.isObjectCloserToTheGround());
     }
 
@@ -45,7 +45,7 @@ public class DinoSensorTest {
         int distance = Integer.MAX_VALUE;
         for (int i = 65; i <= 74; i++) {
             String pathname = "src/test/resources/movingobject/game" + i + ".png";
-            DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File(pathname)), Boolean.FALSE);
+            DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File(pathname)));
             assertTrue(dinoSensor.distanceFromObject() < distance);
             distance = dinoSensor.distanceFromObject();
         }
