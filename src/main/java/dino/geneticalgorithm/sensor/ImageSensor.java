@@ -25,7 +25,7 @@ public class ImageSensor {
                 up = true;
                 objectPixel = i;
             }
-            for (int yAxisBottomUp = image.getHeight() - 1; yAxisBottomUp > image.getHeight() - 15; yAxisBottomUp--) {
+            for (int yAxisBottomUp = image.getHeight() - 1; yAxisBottomUp > image.getHeight() - 12; yAxisBottomUp--) {
                 if (isGrayPixel(i, yAxisBottomUp)) {
                     bottom = true;
                     objectPixel = i;
