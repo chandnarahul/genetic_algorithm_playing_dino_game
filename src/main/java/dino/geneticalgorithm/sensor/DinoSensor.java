@@ -11,7 +11,11 @@ public class DinoSensor {
 
     protected DinoSensor(BufferedImage bufferedImage) {
         this.speed = 0;
-        this.imageSensor = new ImageSensor(removeDinoFloorAndSkyFromImage(bufferedImage));
+        if (bufferedImage.getWidth() > 250) {
+            this.imageSensor = new ImageSensor(removeDinoFloorAndSkyFromImage(bufferedImage));
+        } else {
+            this.imageSensor = new ImageSensor(bufferedImage);
+        }
         this.imageSensor.findObjects();
     }
 

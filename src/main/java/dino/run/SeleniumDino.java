@@ -29,16 +29,13 @@ public class SeleniumDino {
             do {
                 BufferedImage image = ImageIO.read(takeScreenshot(webDriver));
                 DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
+                System.out.println(dinoSensor.distanceFromObject());
                 if (dinoSensor.isObjectCloserToTheGround()) {
-                    dinoSensor.setSpeed(getSpeed());
-                    System.out.println(dinoSensor.distanceFromObject() + " " + dinoSensor.speed() + " " + (dinoSensor.distanceFromObject() / dinoSensor.speed()));
-                    if (dinoSensor.distanceFromObject() <= 90) {
+                    if (performAction(dinoSensor)) {
                         webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
                     }
                 } else if (dinoSensor.isObjectFlying()) {
-                    dinoSensor.setSpeed(getSpeed());
-                    System.out.println(dinoSensor.distanceFromObject() + " " + dinoSensor.speed() + " " + (dinoSensor.distanceFromObject() / dinoSensor.speed()));
-                    if (dinoSensor.distanceFromObject() <= 90) {
+                    if (performAction(dinoSensor)) {
                         duck();
                     }
                 }
@@ -55,20 +52,15 @@ public class SeleniumDino {
         }
     }
 
+    private boolean performAction(DinoSensor dinoSensor) {
+        return dinoSensor.distanceFromObject() <= 168;
+    }
+
     private void duck() throws AWTException {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_DOWN);
         robot.delay(500);
         robot.keyRelease(KeyEvent.VK_DOWN);
-    }
-
-    private double getSpeed() {
-        try {
-            String speed = webDriver.findElement(By.id("speed")).getAttribute("value");
-            return Double.parseDouble(speed);
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     private static File takeScreenshot(WebDriver driver) {

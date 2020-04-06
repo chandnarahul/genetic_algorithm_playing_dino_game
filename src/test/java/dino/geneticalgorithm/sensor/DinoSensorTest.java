@@ -12,19 +12,13 @@ public class DinoSensorTest {
 
     @Test
     public void should_identify_flyingObject() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/bird_flying_high_and_other_objects.png")));
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/flying.png")));
         assertTrue(dinoSensor.isObjectFlying());
     }
 
     @Test
     public void should_return_flyingObject_distance() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/bird_flying_high_and_other_objects.png")));
-        assertTrue(dinoSensor.distanceFromObject() > 0);
-    }
-
-    @Test
-    public void should_identify_object_closer_to_the_ground() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/all_objects_closer_to_the_ground.png")));
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/flying.png")));
         assertTrue(dinoSensor.distanceFromObject() > 0);
     }
 
@@ -53,7 +47,7 @@ public class DinoSensorTest {
 
     @Test
     public void should_return_groundObject_distance() throws IOException {
-        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/all_objects_closer_to_the_ground.png")));
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/ground_object.png")));
         assertTrue(dinoSensor.distanceFromObject() > 0);
     }
 }
