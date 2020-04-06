@@ -22,6 +22,12 @@ public class DinoSensorTest {
         assertTrue(dinoSensor.distanceFromObject() > 0);
     }
 
+    @Test(expected = AssertionError.class)
+    public void should_fail_since_this_is_not_flyingObject() throws IOException {
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/duck_bug.png")));
+        assertTrue(dinoSensor.isObjectFlying());
+    }
+
     @Test
     public void should_identify_mini_object_closer_to_the_ground_1() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/mini_objects.png")));

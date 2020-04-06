@@ -5,7 +5,7 @@ import java.awt.image.DataBufferByte;
 
 public class DinoSensor {
     private double speed;
-    private final int DINO_X_AXIS = 75;
+    private final int DINO_X_AXIS = 78;
     private final int DINO_Y_AXIS = 162;
     private final ImageSensor imageSensor;
 
