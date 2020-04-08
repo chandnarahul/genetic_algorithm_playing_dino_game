@@ -30,19 +30,19 @@ public class SeleniumDino {
                 BufferedImage image = ImageIO.read(takeScreenshot(webDriver));
                 DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
                 if(dinoSensor.isAnyObjectFound()){
-                    System.out.println(dinoSensor.distanceFromObject());
+                    //System.out.println(dinoSensor.distanceFromObject());
                 }
                 if (dinoSensor.isObjectCloserToTheGround()) {
                     if (performGroundAction(dinoSensor)) {
                         webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
                     }
-                    ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
+                    //ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
                 } else if (dinoSensor.isObjectFlying()) {
                     if (performFlyingAction(dinoSensor)) {
-                        System.out.println("ducking at "+i);
+                        //System.out.println("ducking at "+i);
                         duck();
                     }
-                    ImageIO.write(dinoSensor.image(), "png", new File("images/duckgame" + i + ".png"));
+                    //ImageIO.write(dinoSensor.image(), "png", new File("images/duckgame" + i + ".png"));
                 }
                 i++;
             } while (Boolean.TRUE);
@@ -61,7 +61,7 @@ public class SeleniumDino {
     }
 
     private boolean performGroundAction(DinoSensor dinoSensor) {
-        return dinoSensor.distanceFromObject() <= 170;
+        return dinoSensor.distanceFromObject() <= 174;
     }
 
     private void duck() throws AWTException {
