@@ -3,7 +3,6 @@ package dino.run;
 import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.DinoSensor;
 import dino.geneticalgorithm.sensor.DinoSensorInteraction;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.*;
 
 import javax.imageio.ImageIO;
@@ -23,7 +22,6 @@ public class SeleniumDino {
     public void run() throws Exception {
         try {
             WebElement ele = webDriver.findElement(By.className("runner-canvas"));
-            Point point = ele.getLocation();
             webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
             Thread.sleep(2000);
             int i = 0;
