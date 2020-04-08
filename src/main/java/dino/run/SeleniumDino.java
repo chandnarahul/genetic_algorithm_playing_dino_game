@@ -45,7 +45,7 @@ public class SeleniumDino {
         long start = new Date().getTime();
         BufferedImage bufferedImage = ImageIO.read(takeScreenshot(webDriver));
         long screenshotDelay = new Date().getTime() - start;
-        DinoSensor dinoSensor = new DinoSensorInteraction(bufferedImage, screenshotDelay, gameStartTime).sensor();
+        DinoSensor dinoSensor = new DinoSensorInteraction(bufferedImage, screenshotDelay).sensor();
         if (dinoSensor.isObjectCloserToTheGround()) {
             if (performGroundAction(dinoSensor)) {
                 webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
@@ -57,6 +57,10 @@ public class SeleniumDino {
                 writeDebugImages(dinoSensor, "images/game");
             }
         }
+    }
+
+    private double dinoSpeed() {
+        return Double.parseDouble(((JavascriptExecutor) webDriver).executeScript("return Runner.instance_.currentSpeed;").toString());
     }
 
     private void writeDebugImages(DinoSensor dinoSensor, String fileName) throws IOException {
