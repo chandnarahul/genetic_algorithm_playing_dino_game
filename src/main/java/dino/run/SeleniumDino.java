@@ -1,5 +1,6 @@
 package dino.run;
 
+import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.DinoSensor;
 import dino.geneticalgorithm.sensor.DinoSensorInteraction;
 import dino.geneticalgorithm.sensor.exception.GameOverException;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
 public class SeleniumDino {
     private final WebDriver webDriver;
@@ -29,31 +31,33 @@ public class SeleniumDino {
             do {
                 BufferedImage image = ImageIO.read(takeScreenshot(webDriver));
                 DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
-                if(dinoSensor.isAnyObjectFound()){
-                    //System.out.println(dinoSensor.distanceFromObject());
-                }
                 if (dinoSensor.isObjectCloserToTheGround()) {
                     if (performGroundAction(dinoSensor)) {
                         webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
                     }
-                    //ImageIO.write(dinoSensor.image(), "png", new File("images/game" + i + ".png"));
+                    writeDebugImages(i, dinoSensor, "images/game");
                 } else if (dinoSensor.isObjectFlying()) {
                     if (performFlyingAction(dinoSensor)) {
-                        //System.out.println("ducking at "+i);
-                        duck();
+                        duckFromFlyingDuck();
                     }
-                    //ImageIO.write(dinoSensor.image(), "png", new File("images/duckgame" + i + ".png"));
+                    writeDebugImages(i, dinoSensor, "images/duck_game");
                 }
                 i++;
             } while (Boolean.TRUE);
         } catch (Throwable e) {
-            if (e instanceof GameOverException) {
-                ImageIO.write(((GameOverException) e).getDinoSensor().image(), "png", new File("images/game.png"));
+            if (DinoConstants.IN_DEBUG_MODE) {
+                if (e instanceof GameOverException) {
+                    ImageIO.write(((GameOverException) e).getDinoSensor().image(), "png", new File("images/game.png"));
+                }
+                e.printStackTrace();
             }
-            e.printStackTrace();
         } finally {
             webDriver.quit();
         }
+    }
+
+    private void writeDebugImages(int i, DinoSensor dinoSensor, String fileName) throws IOException {
+        ImageIO.write(dinoSensor.image(), "png", new File(fileName + i + ".png"));
     }
 
     private boolean performFlyingAction(DinoSensor dinoSensor) {
@@ -64,7 +68,7 @@ public class SeleniumDino {
         return dinoSensor.distanceFromObject() <= 174;
     }
 
-    private void duck() throws AWTException {
+    private void duckFromFlyingDuck() throws AWTException {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_DOWN);
         robot.delay(500);
