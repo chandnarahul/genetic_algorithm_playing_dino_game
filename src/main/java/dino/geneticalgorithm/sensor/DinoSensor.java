@@ -4,53 +4,36 @@ import dino.DinoConstants;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.io.File;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class DinoSensor {
     private final int DINO_X_AXIS = 78;
     private final int DINO_Y_AXIS = 154;
+    private final BufferedImage image;
+    private final long screenshotDelay;
     private boolean isObjectFlying = Boolean.FALSE;
     private boolean isObjectCloserToTheGround = Boolean.FALSE;
     private int distanceFromFirstObjectXAxis = 0;
     private int groundObjectWidth = 0;
-    private final BufferedImage image;
-    private long screenshotDelay;
-    private Date gameStartTime;
-
 
     public DinoSensor(BufferedImage image) {
+        this(image, DinoConstants.DIRECT_CAPTURE);
+    }
+
+    public DinoSensor(BufferedImage bufferedImage, long screenshotDelay) {
+        this.screenshotDelay = screenshotDelay;
         int gameCanvasWidth = 500;
-        if (image.getWidth() == gameCanvasWidth) {
-            this.image = removeDinoFloorAndSkyFromImage(image);
+        if (bufferedImage.getWidth() == gameCanvasWidth) {
+            this.image = removeDinoFloorAndSkyFromImage(bufferedImage);
         } else {
-            this.image = image;
+            this.image = bufferedImage;
         }
         this.findObject();
-    }
-
-    protected void setScreenshotDelay(long screenshotDelay) {
-        this.screenshotDelay = screenshotDelay;
-    }
-
-    protected void setGameStartTime(Date gameStartTime) {
-        this.gameStartTime = gameStartTime;
-    }
-
-    public int gameLevel() {
-        return (int) TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - gameStartTime.getTime()) / DinoConstants.SECONDS_SPEED_INCREASES_IN;
     }
 
     private BufferedImage removeDinoFloorAndSkyFromImage(BufferedImage image) {
         return image.getSubimage(DINO_X_AXIS, DINO_Y_AXIS, image.getWidth() / 2, image.getHeight() - 291);
     }
-
-    public DataBufferByte imageDataBuffer() {
-        return (DataBufferByte) image.getRaster().getDataBuffer();
-    }
-
 
     private boolean isAnyPixelFoundAtBottom(int firstPixelFoundAt) {
         int fewPixelsTowardsRight = 10;
