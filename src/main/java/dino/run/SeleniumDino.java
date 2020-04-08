@@ -22,25 +22,31 @@ public class SeleniumDino {
         try {
             webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
             Thread.sleep(2000);
-            int i = 0;
+            int imageIndex = 0;
             do {
-                DinoSensor dinoSensor = new DinoSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).sensor();
-                if (dinoSensor.isObjectCloserToTheGround()) {
-                    if (performGroundAction(dinoSensor)) {
-                        webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
-                    }
-                    writeDebugImages(i, dinoSensor, "images/game");
-                } else if (dinoSensor.isObjectFlying()) {
-                    if (performFlyingAction(dinoSensor)) {
-                        duckFromFlyingDuck();
-                    }
-                    writeDebugImages(i, dinoSensor, "images/duck_game");
+                processImageAndTakeAction(imageIndex);
+                if (DinoConstants.IN_DEBUG_MODE) {
+                    imageIndex++;
                 }
-                i++;
             } while (Boolean.TRUE);
         } catch (Throwable e) {
         } finally {
             webDriver.quit();
+        }
+    }
+
+    private void processImageAndTakeAction(int i) throws IOException, AWTException {
+        DinoSensor dinoSensor = new DinoSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).sensor();
+        if (dinoSensor.isObjectCloserToTheGround()) {
+            if (performGroundAction(dinoSensor)) {
+                webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
+            }
+            writeDebugImages(i, dinoSensor, "images/game");
+        } else if (dinoSensor.isObjectFlying()) {
+            if (performFlyingAction(dinoSensor)) {
+                duckFromFlyingDuck();
+            }
+            writeDebugImages(i, dinoSensor, "images/duck_game");
         }
     }
 
