@@ -11,6 +11,25 @@ import static org.junit.Assert.assertTrue;
 public class DinoSensorTest {
 
     @Test
+    public void should_calculate_ground_object_width() throws IOException {
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/cluster.png")));
+        assertTrue(dinoSensor.groundObjectWidth() > 0);
+    }
+
+    @Test
+    public void should_calculate_ground_object_at_the_end_width() throws IOException {
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/cluster_at_end.png")));
+        assertTrue(dinoSensor.groundObjectWidth() > 0);
+    }
+
+
+    @Test
+    public void should_not_calculate_flying_object_width() throws IOException {
+        DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/flying.png")));
+        assertTrue(dinoSensor.groundObjectWidth() == 0);
+    }
+
+    @Test
     public void should_identify_flyingObject() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/flying.png")));
         assertTrue(dinoSensor.isObjectFlying());
@@ -23,7 +42,7 @@ public class DinoSensorTest {
     }
 
     @Test(expected = AssertionError.class)
-    public void should_fail_since_this_is_not_flyingObject() throws IOException {
+    public void should_fail_since_this_is_not_a_flyingObject() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/duck_bug.png")));
         assertTrue(dinoSensor.isObjectFlying());
     }
