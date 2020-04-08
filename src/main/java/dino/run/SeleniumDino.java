@@ -2,7 +2,7 @@ package dino.run;
 
 import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.DinoSensor;
-import dino.geneticalgorithm.sensor.exception.GameOverException;
+import dino.geneticalgorithm.sensor.DinoSensorInteraction;
 import org.openqa.selenium.*;
 
 import javax.imageio.ImageIO;
@@ -45,7 +45,7 @@ public class SeleniumDino {
         long start = new Date().getTime();
         BufferedImage bufferedImage = ImageIO.read(takeScreenshot(webDriver));
         long screenshotDelay = new Date().getTime() - start;
-        DinoSensor dinoSensor = new DinoSensor(bufferedImage, screenshotDelay);
+        DinoSensor dinoSensor = new DinoSensorInteraction(bufferedImage, screenshotDelay, gameStartTime).sensor();
         if (dinoSensor.isObjectCloserToTheGround()) {
             if (performGroundAction(dinoSensor)) {
                 webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
@@ -56,13 +56,7 @@ public class SeleniumDino {
                 duckFromFlyingDuck();
                 writeDebugImages(dinoSensor, "images/game");
             }
-        } else if (hasDinoCrashed()) {
-            throw new GameOverException("game over", dinoSensor);
         }
-    }
-
-    private boolean hasDinoCrashed() {
-        return Boolean.parseBoolean(((JavascriptExecutor) webDriver).executeScript("return Runner.instance_.crashed;").toString());
     }
 
     private void writeDebugImages(DinoSensor dinoSensor, String fileName) throws IOException {
