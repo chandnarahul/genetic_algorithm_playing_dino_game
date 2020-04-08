@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class SeleniumDino {
     private final WebDriver webDriver;
+    private int screenshotImageIndex = 0;
 
     public SeleniumDino(WebDriver webDriver) {
         this.webDriver = webDriver;
@@ -21,12 +22,8 @@ public class SeleniumDino {
     public void run() {
         try {
             startGame();
-            int imageIndex = 0;
             for (; ; ) {
-                processImageAndTakeAction(imageIndex);
-                if (DinoConstants.IN_DEBUG_MODE) {
-                    imageIndex++;
-                }
+                processImageAndTakeAction();
             }
         } catch (Throwable e) {
         } finally {
@@ -39,24 +36,25 @@ public class SeleniumDino {
         Thread.sleep(2000);
     }
 
-    private void processImageAndTakeAction(int i) throws IOException, AWTException {
+    private void processImageAndTakeAction() throws IOException, AWTException {
         DinoSensor dinoSensor = new DinoSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).sensor();
         if (dinoSensor.isObjectCloserToTheGround()) {
             if (performGroundAction(dinoSensor)) {
                 webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
+                writeDebugImages(dinoSensor, "images/game");
             }
-            writeDebugImages(i, dinoSensor, "images/game");
         } else if (dinoSensor.isObjectFlying()) {
             if (performFlyingAction(dinoSensor)) {
                 duckFromFlyingDuck();
+                writeDebugImages(dinoSensor, "images/game");
             }
-            writeDebugImages(i, dinoSensor, "images/duck_game");
         }
     }
 
-    private void writeDebugImages(int i, DinoSensor dinoSensor, String fileName) throws IOException {
+    private void writeDebugImages(DinoSensor dinoSensor, String fileName) throws IOException {
         if (DinoConstants.IN_DEBUG_MODE) {
-            ImageIO.write(dinoSensor.image(), "png", new File(fileName + i + ".png"));
+            ImageIO.write(dinoSensor.image(), "png", new File(fileName + screenshotImageIndex + ".png"));
+            screenshotImageIndex++;
         }
     }
 
