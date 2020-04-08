@@ -3,7 +3,6 @@ package dino.run;
 import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.DinoSensor;
 import dino.geneticalgorithm.sensor.DinoSensorInteraction;
-import dino.geneticalgorithm.sensor.exception.GameOverException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.*;
 
@@ -45,19 +44,15 @@ public class SeleniumDino {
                 i++;
             } while (Boolean.TRUE);
         } catch (Throwable e) {
-            if (DinoConstants.IN_DEBUG_MODE) {
-                if (e instanceof GameOverException) {
-                    ImageIO.write(((GameOverException) e).getDinoSensor().image(), "png", new File("images/game.png"));
-                }
-                e.printStackTrace();
-            }
         } finally {
             webDriver.quit();
         }
     }
 
     private void writeDebugImages(int i, DinoSensor dinoSensor, String fileName) throws IOException {
-        ImageIO.write(dinoSensor.image(), "png", new File(fileName + i + ".png"));
+        if (DinoConstants.IN_DEBUG_MODE) {
+            ImageIO.write(dinoSensor.image(), "png", new File(fileName + i + ".png"));
+        }
     }
 
     private boolean performFlyingAction(DinoSensor dinoSensor) {
