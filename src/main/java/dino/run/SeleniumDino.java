@@ -8,7 +8,6 @@ import org.openqa.selenium.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,15 +18,13 @@ public class SeleniumDino {
         this.webDriver = webDriver;
     }
 
-    public void run() throws Exception {
+    public void run() {
         try {
-            WebElement ele = webDriver.findElement(By.className("runner-canvas"));
             webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
             Thread.sleep(2000);
             int i = 0;
             do {
-                BufferedImage image = ImageIO.read(takeScreenshot(webDriver));
-                DinoSensor dinoSensor = new DinoSensorInteraction(image).sensor();
+                DinoSensor dinoSensor = new DinoSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).sensor();
                 if (dinoSensor.isObjectCloserToTheGround()) {
                     if (performGroundAction(dinoSensor)) {
                         webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
