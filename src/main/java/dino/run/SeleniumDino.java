@@ -20,8 +20,7 @@ public class SeleniumDino {
 
     public void run() {
         try {
-            webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
-            Thread.sleep(2000);
+            startGame();
             int imageIndex = 0;
             do {
                 processImageAndTakeAction(imageIndex);
@@ -33,6 +32,11 @@ public class SeleniumDino {
         } finally {
             webDriver.quit();
         }
+    }
+
+    private void startGame() throws InterruptedException {
+        webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
+        Thread.sleep(2000);
     }
 
     private void processImageAndTakeAction(int i) throws IOException, AWTException {
