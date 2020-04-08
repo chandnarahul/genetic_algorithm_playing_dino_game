@@ -8,12 +8,15 @@ import org.openqa.selenium.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 public class SeleniumDino {
     private final WebDriver webDriver;
     private int screenshotImageIndex = 0;
+    private Date gameStartTime;
 
     public SeleniumDino(WebDriver webDriver) {
         this.webDriver = webDriver;
@@ -22,11 +25,13 @@ public class SeleniumDino {
     public void run() {
         try {
             startGame();
+            gameStartTime = new Date();
             for (; ; ) {
                 processImageAndTakeAction();
             }
         } catch (Throwable e) {
         } finally {
+            System.out.println("game ran for " + (new Date().getTime() - gameStartTime.getTime()));
             webDriver.quit();
         }
     }
@@ -37,7 +42,10 @@ public class SeleniumDino {
     }
 
     private void processImageAndTakeAction() throws IOException, AWTException {
-        DinoSensor dinoSensor = new DinoSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).sensor();
+        long start = new Date().getTime();
+        BufferedImage bufferedImage = ImageIO.read(takeScreenshot(webDriver));
+        long screenshotDelay = new Date().getTime() - start;
+        DinoSensor dinoSensor = new DinoSensorInteraction(bufferedImage, screenshotDelay, gameStartTime).sensor();
         if (dinoSensor.isObjectCloserToTheGround()) {
             if (performGroundAction(dinoSensor)) {
                 webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
@@ -59,11 +67,15 @@ public class SeleniumDino {
     }
 
     private boolean performFlyingAction(DinoSensor dinoSensor) {
-        return dinoSensor.distanceFromObject() <= 180;
+        return dinoSensor.distanceFromObject() <= 200;
     }
 
     private boolean performGroundAction(DinoSensor dinoSensor) {
-        return dinoSensor.distanceFromObject() <= 174;
+        if (dinoSensor.isLongGroundObject()) {
+            return dinoSensor.distanceFromObject() - dinoSensor.screenshotDelay() <= 10;
+        } else {
+            return dinoSensor.distanceFromObject() - dinoSensor.screenshotDelay() <= 80;
+        }
     }
 
     private void duckFromFlyingDuck() throws AWTException {

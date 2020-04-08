@@ -6,6 +6,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DinoSensor {
     private final int DINO_X_AXIS = 78;
@@ -15,8 +17,11 @@ public class DinoSensor {
     private int distanceFromFirstObjectXAxis = 0;
     private int groundObjectWidth = 0;
     private final BufferedImage image;
+    private long screenshotDelay;
+    private Date gameStartTime;
 
-    protected DinoSensor(BufferedImage image) {
+
+    public DinoSensor(BufferedImage image) {
         int gameCanvasWidth = 500;
         if (image.getWidth() == gameCanvasWidth) {
             this.image = removeDinoFloorAndSkyFromImage(image);
@@ -24,6 +29,18 @@ public class DinoSensor {
             this.image = image;
         }
         this.findObject();
+    }
+
+    protected void setScreenshotDelay(long screenshotDelay) {
+        this.screenshotDelay = screenshotDelay;
+    }
+
+    protected void setGameStartTime(Date gameStartTime) {
+        this.gameStartTime = gameStartTime;
+    }
+
+    public int gameLevel() {
+        return (int) TimeUnit.MILLISECONDS.toSeconds(new Date().getTime() - gameStartTime.getTime()) / DinoConstants.SECONDS_SPEED_INCREASES_IN;
     }
 
     private BufferedImage removeDinoFloorAndSkyFromImage(BufferedImage image) {
@@ -130,11 +147,12 @@ public class DinoSensor {
         return distanceFromFirstObjectXAxis;
     }
 
-    public boolean isAnyObjectFound() {
-        return isObjectCloserToTheGround || isObjectFlying;
+    public long screenshotDelay() {
+        return screenshotDelay;
     }
 
-    public int groundObjectWidth() {
-        return groundObjectWidth;
+    public boolean isLongGroundObject() {
+        int clusteredCactusSize = 60;
+        return groundObjectWidth > clusteredCactusSize;
     }
 }

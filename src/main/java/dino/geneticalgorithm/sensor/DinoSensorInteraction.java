@@ -1,11 +1,13 @@
 package dino.geneticalgorithm.sensor;
 
+import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.exception.GameOverException;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class DinoSensorInteraction {
@@ -14,10 +16,16 @@ public class DinoSensorInteraction {
     private static final List<DinoSensor> imageBuffers = new ArrayList<>(MAX_COMMON_IMAGES);
     private final DinoSensor dinoSensor;
 
-    public DinoSensorInteraction(BufferedImage image) {
+    public DinoSensorInteraction(BufferedImage image, long screenshotDelay, Date gameStartTime) {
         this.dinoSensor = new DinoSensor(image);
+        this.dinoSensor.setScreenshotDelay(screenshotDelay);
+        this.dinoSensor.setGameStartTime(gameStartTime);
         imageBuffers.add(dinoSensor);
         stopExecutionIfNoNewImageIsReceived();
+    }
+
+    public DinoSensorInteraction(BufferedImage bufferedImage) {
+        this(bufferedImage, DinoConstants.DIRECT_CAPTURE, new Date());
     }
 
     public DinoSensor sensor() {
