@@ -22,12 +22,12 @@ public class SeleniumDino {
         try {
             startGame();
             int imageIndex = 0;
-            do {
+            for (; ; ) {
                 processImageAndTakeAction(imageIndex);
                 if (DinoConstants.IN_DEBUG_MODE) {
                     imageIndex++;
                 }
-            } while (Boolean.TRUE);
+            }
         } catch (Throwable e) {
         } finally {
             webDriver.quit();
