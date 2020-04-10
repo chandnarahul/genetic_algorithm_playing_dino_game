@@ -57,6 +57,9 @@ public class SeleniumDino {
                 writeDebugImages(dinoSensor, "images/game");
             }
         }
+
+        //as speed increases jump gets higher
+        System.out.println(dinoSpeed());
     }
 
     private double dinoSpeed() {
