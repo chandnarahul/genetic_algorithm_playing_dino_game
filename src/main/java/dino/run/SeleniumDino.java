@@ -43,7 +43,7 @@ public class SeleniumDino {
                 jump();
                 break;
             case IN_THE_SKY:
-                duckFromFlyingDuck();
+                duckFromObjectInTheSky();
                 break;
         }
     }
@@ -52,7 +52,7 @@ public class SeleniumDino {
         webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
     }
 
-    private void duckFromFlyingDuck() throws AWTException {
+    private void duckFromObjectInTheSky() throws AWTException {
         Robot robot = new Robot();
         robot.keyPress(KeyEvent.VK_DOWN);
         robot.delay(500);
