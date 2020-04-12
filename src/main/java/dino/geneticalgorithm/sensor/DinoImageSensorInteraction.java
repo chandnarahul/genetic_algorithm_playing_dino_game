@@ -27,7 +27,7 @@ public class DinoImageSensorInteraction {
 
     private void stopExecutionIfNoNewImageIsReceived() {
         if (imageBuffers.size() == MAX_COMMON_IMAGES) {
-            throw new GameOverException("game over", dinoSensor);
+            throw new GameOverException("game over");
         } else if (ifUniqueImage()) {
             imageBuffers.clear();
         }
