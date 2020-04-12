@@ -1,25 +1,21 @@
 package dino.geneticalgorithm.sensor;
 
 import dino.DinoConstants;
+import dino.geneticalgorithm.sensor.image.PixelUtility;
+import dino.geneticalgorithm.sensor.object.ObjectLocation;
+import dino.geneticalgorithm.sensor.object.ObjectWidth;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
 
 public class DinoSensor {
-    private final int DINO_X_AXIS = 78;
-    private final int DINO_Y_AXIS = 154;
-    private boolean isObjectFlying = Boolean.FALSE;
-    private boolean isObjectCloserToTheGround = Boolean.FALSE;
-    private int distanceFromFirstObjectXAxis = 0;
+    private ObjectLocation objectLocation = ObjectLocation.NO_OBJECT_DETECTED;
     private int groundObjectWidth = 0;
     private final BufferedImage image;
-    private long screenshotDelay;
+    private int objectXAxisPoint;
 
     public DinoSensor(BufferedImage image) {
-        int gameCanvasWidth = 500;
-        if (image.getWidth() == gameCanvasWidth) {
+        if (image.getWidth() == DinoConstants.GAME_CANVAS_WIDTH) {
             this.image = removeDinoFloorAndSkyFromImage(image);
         } else {
             this.image = image;
@@ -27,12 +23,8 @@ public class DinoSensor {
         this.findObject();
     }
 
-    protected void setScreenshotDelay(long screenshotDelay) {
-        this.screenshotDelay = screenshotDelay;
-    }
-
     private BufferedImage removeDinoFloorAndSkyFromImage(BufferedImage image) {
-        return image.getSubimage(DINO_X_AXIS, DINO_Y_AXIS, image.getWidth() / 2, image.getHeight() - 291);
+        return image.getSubimage(DinoConstants.DINO_X_AXIS, DinoConstants.DINO_Y_AXIS, image.getWidth() / 2, image.getHeight() - 291);
     }
 
     public DataBufferByte imageDataBuffer() {
@@ -40,107 +32,77 @@ public class DinoSensor {
     }
 
 
-    private boolean isAnyPixelFoundAtBottom(int firstPixelFoundAt) {
-        int fewPixelsTowardsRight = 10;
-        int pixelsFound = 0;
-        for (int traverseXAxis = firstPixelFoundAt; traverseXAxis < image.getWidth(); traverseXAxis++) {
-            if (isGrayPixel(traverseXAxis, image.getHeight() - 1)) {
+    private boolean isAnyPixelFoundAtBottom(int currentXAxisLocation) {
+        for (int traverseYAxis = image.getHeight() - 1; traverseYAxis >= 0; traverseYAxis--) {
+            if (new PixelUtility(image).isGrayPixel(currentXAxisLocation, traverseYAxis)) {
                 return Boolean.TRUE;
             } else {
-                pixelsFound++;
-                if (pixelsFound == fewPixelsTowardsRight) {
-                    return Boolean.FALSE;
-                }
+                return Boolean.FALSE;
             }
         }
         return Boolean.FALSE;
     }
 
     private void findObject() {
+        int continueForFewPixels = 15;
+        int firstPixelFound = -1;
         for (int i = 0; i < image.getWidth(); i++) {
-            if (isAnyPixelFoundAtTop(i)) {
-                distanceFromFirstObjectXAxis = i;
-                this.isObjectFlying = Boolean.TRUE;
-                this.isObjectCloserToTheGround = Boolean.FALSE;
+            if (new PixelUtility(image).isAnyPixelFoundAtTop(i)) {
+                if (firstPixelFound == -1) {
+                    firstPixelFound = i;
+                    this.objectXAxisPoint = firstPixelFound;
+                }
+                objectLocation = ObjectLocation.IN_THE_SKY;
             }
             if (isAnyPixelFoundAtBottom(i)) {
-                this.isObjectCloserToTheGround = Boolean.TRUE;
-                this.isObjectFlying = Boolean.FALSE;
+                if (firstPixelFound == -1) {
+                    firstPixelFound = i;
+                    this.objectXAxisPoint = firstPixelFound;
+                }
+                objectLocation = ObjectLocation.CLOSER_TO_THE_GROUND;
+                this.groundObjectWidth = new ObjectWidth(this.objectXAxisPoint, image).determineWidthOfTheGroundObject();
             }
-            if (this.isObjectCloserToTheGround || this.isObjectFlying) {
-                distanceFromFirstObjectXAxis = i;
+            if (firstPixelFound != -1 && (i - firstPixelFound) > continueForFewPixels) {
                 break;
             }
         }
-        if (this.isObjectCloserToTheGround) {
-            this.groundObjectWidth = determineWidthOfTheGroundObject();
-        }
     }
 
-    private boolean isAnyPixelFoundAtTop(int i) {
-        return isGrayPixel(i, 0);
+    public ObjectLocation objectLocation() {
+        return this.objectLocation;
     }
 
-    private int determineWidthOfTheGroundObject() {
-        int pixelNotFound = 0;
-        int lastPixelFound = 0;
-        for (int i = distanceFromFirstObjectXAxis; i < image().getWidth(); i++) {
-            if (isGrayPixel(i, image().getHeight() - 1)) {
-                lastPixelFound = i;
-                pixelNotFound = 0;
-            } else {
-                pixelNotFound++;
-            }
-            if (pixelNotFound > 10) {
-                return calculateObjectWidth(lastPixelFound);
-            }
-        }
-        return calculateObjectWidth(lastPixelFound);
+    protected boolean isLongGroundObject() {
+        return groundObjectWidth >= DinoConstants.CLUSTERED_CACTUS_SIZE;
     }
 
-    private int calculateObjectWidth(int lastPixelFound) {
-        extractObjectAsImage(lastPixelFound);
-        return lastPixelFound - distanceFromFirstObjectXAxis;
-    }
-
-    private void extractObjectAsImage(int lastPixelFound) {
-        try {
-            if (DinoConstants.IN_DEBUG_MODE && lastPixelFound != 0) {
-                ImageIO.write(image.getSubimage(distanceFromFirstObjectXAxis, 0, lastPixelFound - distanceFromFirstObjectXAxis, 30), "png", new File("images/block.png"));
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    private boolean isGrayPixel(int xAxis, int yAxisBottomUp) {
-        final int grayScale = 90;
-        int pixel = image.getRGB(xAxis, yAxisBottomUp) & 0xFF;
-        return pixel < grayScale;
-    }
-
-    public BufferedImage image() {
-        return image;
-    }
-
-    public boolean isObjectFlying() {
-        return isObjectFlying;
-    }
-
-    public boolean isObjectCloserToTheGround() {
-        return isObjectCloserToTheGround;
+    public int getGroundObjectWidth() {
+        return groundObjectWidth;
     }
 
     public int distanceFromObject() {
-        return distanceFromFirstObjectXAxis;
+        if (isLongGroundObject()) {
+            return this.objectXAxisPoint + getGroundObjectWidth() / 2;
+        } else {
+            return this.objectXAxisPoint;
+        }
     }
 
-    public long screenshotDelay() {
-        return screenshotDelay;
+    public ObjectLocation performGroundAction() {
+        return distanceFromObject() < DinoConstants.JUMP_SAFE_DISTANCE ? ObjectLocation.CLOSER_TO_THE_GROUND : ObjectLocation.NO_OBJECT_DETECTED;
     }
 
-    public boolean isLongGroundObject() {
-        int clusteredCactusSize = 60;
-        return groundObjectWidth > clusteredCactusSize;
+    public ObjectLocation performFlyingAction() {
+        return distanceFromObject() <= DinoConstants.JUMP_SAFE_DISTANCE ? ObjectLocation.IN_THE_SKY : ObjectLocation.NO_OBJECT_DETECTED;
+    }
+
+    public ObjectLocation performAction() {
+        if (objectLocation() == ObjectLocation.CLOSER_TO_THE_GROUND) {
+            return performGroundAction();
+        } else if (objectLocation() == ObjectLocation.IN_THE_SKY) {
+            return performFlyingAction();
+        } else {
+            return ObjectLocation.NO_OBJECT_DETECTED;
+        }
     }
 }

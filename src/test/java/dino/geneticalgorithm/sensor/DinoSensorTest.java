@@ -1,11 +1,13 @@
 package dino.geneticalgorithm.sensor;
 
+import dino.geneticalgorithm.sensor.object.ObjectLocation;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DinoSensorTest {
@@ -19,6 +21,7 @@ public class DinoSensorTest {
     @Test
     public void should_calculate_ground_object_at_the_end_width() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/cluster_at_end.png")));
+        System.out.println(dinoSensor.getGroundObjectWidth());
         assertTrue(dinoSensor.isLongGroundObject());
     }
 
@@ -32,7 +35,7 @@ public class DinoSensorTest {
     @Test
     public void should_identify_flyingObject() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/flying.png")));
-        assertTrue(dinoSensor.isObjectFlying());
+        assertEquals(ObjectLocation.IN_THE_SKY, dinoSensor.objectLocation());
     }
 
     @Test
@@ -44,19 +47,19 @@ public class DinoSensorTest {
     @Test(expected = AssertionError.class)
     public void should_fail_since_this_is_not_a_flyingObject() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/duck_bug.png")));
-        assertTrue(dinoSensor.isObjectFlying());
+        assertEquals(ObjectLocation.IN_THE_SKY, dinoSensor.objectLocation());
     }
 
     @Test
     public void should_identify_mini_object_closer_to_the_ground_1() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/mini_objects.png")));
-        assertTrue(dinoSensor.isObjectCloserToTheGround());
+        assertEquals(ObjectLocation.CLOSER_TO_THE_GROUND, dinoSensor.objectLocation());
     }
 
     @Test
     public void should_identify_mini_object_closer_to_the_ground_2() throws IOException {
         DinoSensor dinoSensor = new DinoSensor(ImageIO.read(new File("src/test/resources/game67.png")));
-        assertTrue(dinoSensor.isObjectCloserToTheGround());
+        assertEquals(ObjectLocation.CLOSER_TO_THE_GROUND, dinoSensor.objectLocation());
     }
 
     @Test
