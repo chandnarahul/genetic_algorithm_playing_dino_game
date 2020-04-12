@@ -32,7 +32,7 @@ public class SeleniumDino {
     }
 
     private void startGame() throws InterruptedException {
-        webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
+        jump();
         Thread.sleep(2000);
         gameStartTime = new Date();
     }
@@ -40,12 +40,16 @@ public class SeleniumDino {
     private void processImageAndTakeAction() throws IOException, AWTException {
         switch (new DinoImageSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).performAction()) {
             case CLOSER_TO_THE_GROUND:
-                webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
+                jump();
                 break;
             case IN_THE_SKY:
                 duckFromFlyingDuck();
                 break;
         }
+    }
+
+    private void jump() {
+        webDriver.findElement(By.tagName("body")).sendKeys(Keys.UP);
     }
 
     private void duckFromFlyingDuck() throws AWTException {
