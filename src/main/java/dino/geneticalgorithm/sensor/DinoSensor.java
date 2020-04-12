@@ -32,7 +32,7 @@ public class DinoSensor {
     }
 
 
-    private boolean isAnyPixelFoundAtBottom(int currentXAxisLocation) {
+    private boolean isAnyPixelFoundAtBottomFrom(int currentXAxisLocation) {
         for (int traverseYAxis = image.getHeight() - 1; traverseYAxis >= 0; traverseYAxis--) {
             if (new PixelUtility(image).isGrayPixel(currentXAxisLocation, traverseYAxis)) {
                 return Boolean.TRUE;
@@ -45,28 +45,29 @@ public class DinoSensor {
 
     private void findObject() {
         int firstPixelFoundAt = DinoConstants.PIXEL_NOT_FOUND;
-        for (int i = 0; i < image.getWidth(); i++) {
-            if (new PixelUtility(image).isAnyPixelFoundAtTop(i)) {
-                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, i);
+        for (int X_AXIS = 0; X_AXIS < image.getWidth(); X_AXIS++) {
+            if (new PixelUtility(image).isAnyPixelFoundAtTop(X_AXIS)) {
+                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, X_AXIS);
                 this.objectLocation = ObjectLocation.IN_THE_SKY;
             }
-            if (isAnyPixelFoundAtBottom(i)) {
-                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, i);
+            if (isAnyPixelFoundAtBottomFrom(X_AXIS)) {
+                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, X_AXIS);
                 this.objectLocation = ObjectLocation.CLOSER_TO_THE_GROUND;
                 this.groundObjectWidth = new ObjectWidth(this.objectXAxisPoint, this.image).determineWidthOfTheGroundObject();
             }
-            if (firstPixelFoundAt != DinoConstants.PIXEL_NOT_FOUND && (i - firstPixelFoundAt) > DinoConstants.PIXELS_BUFFER) {
+            if (firstPixelFoundAt != DinoConstants.PIXEL_NOT_FOUND && (X_AXIS - firstPixelFoundAt) > DinoConstants.PIXELS_BUFFER) {
                 break;
             }
         }
     }
 
-    private int setFirstPixelValue(int firstPixelFoundAt, int i) {
+    private int setFirstPixelValue(int firstPixelFoundAt, int X_AXIS) {
         if (firstPixelFoundAt == DinoConstants.PIXEL_NOT_FOUND) {
-            firstPixelFoundAt = i;
-            this.objectXAxisPoint = i;
+            this.objectXAxisPoint = X_AXIS;
+            return X_AXIS;
+        } else {
+            return firstPixelFoundAt;
         }
-        return firstPixelFoundAt;
     }
 
     public ObjectLocation objectLocation() {
