@@ -12,7 +12,9 @@ public class SimpleGAGeneticAlgorithm {
     }
 
     public void evaluatePopulation() {
+        System.out.println("evaluatePopulation start");
         simpleGAPopulation.recalculatePopulationFitness();
+        System.out.println("evaluatePopulation end");
     }
 
     public SimpleGAIndividual getFittest() {
@@ -20,6 +22,7 @@ public class SimpleGAGeneticAlgorithm {
     }
 
     public boolean shouldContinueToEvaluate() {
+        System.out.println("shouldContinueToEvaluate");
         boolean isLessThanMaxNumberOfIterations = iterations < SimpleGAConstants.NUMBER_OF_ITERATIONS;
         boolean haventFoundFittestIndividualYet = simpleGAPopulation.fittestIndividual().getFitnessScore() > SimpleGAConstants.FITTEST_SOLUTION_RUNTIME;
         if (isLessThanMaxNumberOfIterations && haventFoundFittestIndividualYet) {
@@ -31,6 +34,7 @@ public class SimpleGAGeneticAlgorithm {
     }
 
     public void applyCrossover() {
+        System.out.println("applyCrossover start");
         SimpleGAPopulation crossOveredSimpleGAPopulation = new SimpleGAPopulation();
         for (int i = 0; i < SimpleGAConstants.POPULATION_SIZE; i++) {
             SimpleGAIndividual firstParent = crossOveredSimpleGAPopulation.individual(i);
@@ -42,11 +46,12 @@ public class SimpleGAGeneticAlgorithm {
             }
         }
         this.simpleGAPopulation = crossOveredSimpleGAPopulation;
+        System.out.println("applyCrossover end");
     }
 
     private SimpleGAIndividual selectGenesFrom(SimpleGAIndividual fromFirstParent, SimpleGAIndividual fromSecondParent) {
         SimpleGAIndividual simpleGAIndividual = new SimpleGAIndividual();
-        for (int i = 0; i < SimpleGAConstants.SOLUTION.length; i++) {
+        for (int i = 0; i < SimpleGAConstants.CHROMOSOME_LENGTH; i++) {
             if (0.5 > Math.random()) {
                 simpleGAIndividual.selectGeneAt(i, fromFirstParent);
             } else {
@@ -61,11 +66,12 @@ public class SimpleGAGeneticAlgorithm {
     }
 
     public void applyMutation() {
+        System.out.println("applyMutation start");
         SimpleGAPopulation mutatedPopulation = new SimpleGAPopulation();
         for (int i = 0; i < SimpleGAConstants.POPULATION_SIZE; i++) {
             SimpleGAIndividual simpleGAIndividual = simpleGAPopulation.individual(i);
             if (i >= SimpleGAConstants.NUMBER_OF_ELITE_INDIVIDUALS) {
-                for (int geneIndex = 0; geneIndex < SimpleGAConstants.SOLUTION.length; geneIndex++) {
+                for (int geneIndex = 0; geneIndex < SimpleGAConstants.CHROMOSOME_LENGTH; geneIndex++) {
                     if (SimpleGAConstants.MUTATION_RATE > Math.random()) {
                         simpleGAIndividual.flipGeneAt(geneIndex);
                     }
@@ -74,5 +80,6 @@ public class SimpleGAGeneticAlgorithm {
             mutatedPopulation.updateIndividualAt(i, simpleGAIndividual);
         }
         this.simpleGAPopulation = mutatedPopulation;
+        System.out.println("applyMutation end");
     }
 }

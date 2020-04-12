@@ -14,8 +14,11 @@ public class SimpleGAPopulation {
         for (int i = 0; i < POPULATION_SIZE; i++) {
             simpleGAIndividuals.add(new SimpleGAIndividual());
         }
+        System.out.println("Population initialised");
         sortByFittestIndividual();
+        System.out.println("sortByFittestIndividual done");
         recalculatePopulationFitness();
+        System.out.println("recalculatePopulationFitness done");
     }
 
     public void updateIndividualAt(int location, SimpleGAIndividual toIndividual) {

@@ -9,30 +9,36 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.Arrays;
 import java.util.Random;
 
-import static dino.geneticalgorithm.simple_genetic_algorithm.SimpleGAConstants.SOLUTION;
+import static dino.geneticalgorithm.simple_genetic_algorithm.SimpleGAConstants.CHROMOSOME_LENGTH;
 
 public class SimpleGAIndividual {
-    private int[] chromosome = new int[SOLUTION.length];
-
+    private int[] chromosome = new int[CHROMOSOME_LENGTH];
+    private int fitnessValue = DinoConstants.PIXEL_NOT_FOUND;
 
     public SimpleGAIndividual() {
-        for (int i = 0; i < SOLUTION.length; i++) {
+        for (int i = 0; i < CHROMOSOME_LENGTH; i++) {
             chromosome[i] = new Random().nextInt(2);
         }
     }
 
     public int getFitnessScore() {
-        WebDriver webDriver = new ChromeDriver();
-        try {
-            webDriver.get("chrome://dino");
-            webDriver.manage().window().setSize(new Dimension(500, 450));
-            Thread.sleep(1000);
-            DinoConstants.JUMP_SAFE_DISTANCE = chromosomeToInt();
-            return new SeleniumDino(webDriver).run();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return DinoConstants.PIXEL_NOT_FOUND;
+        if (fitnessValue == DinoConstants.PIXEL_NOT_FOUND) {
+            System.out.println("calculate FitnessScore by running dino");
+            WebDriver webDriver = new ChromeDriver();
+            try {
+                webDriver.get("chrome://dino");
+                webDriver.manage().window().setSize(new Dimension(500, 450));
+                Thread.sleep(1000);
+                DinoConstants.JUMP_SAFE_DISTANCE = chromosomeToInt();
+                System.out.println("Running with distance as " + DinoConstants.JUMP_SAFE_DISTANCE);
+                fitnessValue = new SeleniumDino(webDriver).run();
+            } catch (Exception e) {
+                e.printStackTrace();
+                fitnessValue = DinoConstants.PIXEL_NOT_FOUND;
+            }
         }
+        System.out.println("getFitnessScore from cache " + this.fitnessValue + " for chromosome " + this.chromosomeToInt());
+        return this.fitnessValue;
     }
 
     private int chromosomeToInt() {
@@ -45,10 +51,12 @@ public class SimpleGAIndividual {
 
     public void selectGeneAt(int i, SimpleGAIndividual fromFirstParent) {
         chromosome[i] = fromFirstParent.chromosome[i];
+        fitnessValue = DinoConstants.PIXEL_NOT_FOUND;
     }
 
     public SimpleGAIndividual flipGeneAt(int geneIndex) {
         chromosome[geneIndex] = (chromosome[geneIndex] == 1) ? 0 : 1;
+        fitnessValue = DinoConstants.PIXEL_NOT_FOUND;
         return this;
     }
 
@@ -56,6 +64,7 @@ public class SimpleGAIndividual {
     public String toString() {
         return "SimpleGAIndividual {" +
                 "chromosome= " + Arrays.toString(chromosome) +
+                "fitness value= " + chromosomeToInt() +
                 '}';
     }
 }
