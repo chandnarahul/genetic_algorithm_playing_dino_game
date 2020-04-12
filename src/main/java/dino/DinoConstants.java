@@ -12,12 +12,6 @@ public class DinoConstants {
     public static final int GRAY_SCALE_PIXEL_COLOR = 90;
     public static final int PIXELS_BUFFER = 15;
 
-    public static void printDebugMessage(String message) {
-        if (DinoConstants.IN_DEBUG_MODE) {
-            System.out.println(message);
-        }
-    }
-
     /*
      * Runner.instance_.currentSpeed;
      * Runner.instance_.config.GRAVITY
