@@ -1,6 +1,8 @@
 package dino.run;
 
+import dino.DinoConstants;
 import dino.geneticalgorithm.sensor.DinoImageSensorInteraction;
+import dino.geneticalgorithm.sensor.DinoSensor;
 import org.openqa.selenium.*;
 
 import javax.imageio.ImageIO;
@@ -8,17 +10,20 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class SeleniumDino {
     private final WebDriver webDriver;
     private Date gameStartTime;
+    private final List<DinoSensor> imageBuffers = new ArrayList<>(DinoConstants.MAX_COMMON_IMAGES);
 
     public SeleniumDino(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
 
-    public void run() {
+    public int run() {
         try {
             startGame();
             for (; ; ) {
@@ -26,8 +31,8 @@ public class SeleniumDino {
             }
         } catch (Throwable e) {
         } finally {
-            System.out.println("game ran for " + (new Date().getTime() - gameStartTime.getTime()));
             webDriver.quit();
+            return (int) (new Date().getTime() - gameStartTime.getTime());
         }
     }
 
@@ -38,7 +43,7 @@ public class SeleniumDino {
     }
 
     private void processImageAndTakeAction() throws IOException, AWTException {
-        switch (new DinoImageSensorInteraction(ImageIO.read(takeScreenshot(webDriver))).performAction()) {
+        switch (new DinoImageSensorInteraction(ImageIO.read(takeScreenshot(webDriver)), imageBuffers).performAction()) {
             case CLOSER_TO_THE_GROUND:
                 jump();
                 break;

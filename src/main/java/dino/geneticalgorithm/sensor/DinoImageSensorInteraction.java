@@ -5,18 +5,18 @@ import dino.geneticalgorithm.sensor.object.ObjectLocation;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DinoImageSensorInteraction {
 
     public static final int MAX_COMMON_IMAGES = 5;
-    private static final List<DinoSensor> imageBuffers = new ArrayList<>(MAX_COMMON_IMAGES);
     private final DinoSensor dinoSensor;
+    private final List<DinoSensor> imageBuffers;
 
-    public DinoImageSensorInteraction(BufferedImage image) {
+    public DinoImageSensorInteraction(BufferedImage image, List<DinoSensor> imageBuffers) {
         this.dinoSensor = new DinoSensor(image);
+        this.imageBuffers = imageBuffers;
         imageBuffers.add(dinoSensor);
         stopExecutionIfNoNewImageIsReceived();
     }

@@ -83,10 +83,11 @@ public class DinoSensor {
     }
 
     public int distanceFromObject() {
+        int firstPixelWasFoundAt = this.objectXAxisPoint;
         if (isLongGroundObject()) {
-            return this.objectXAxisPoint + getGroundObjectWidth() / 2;
+            return firstPixelWasFoundAt + getGroundObjectWidth() / 2;
         } else {
-            return this.objectXAxisPoint;
+            return firstPixelWasFoundAt;
         }
     }
 
