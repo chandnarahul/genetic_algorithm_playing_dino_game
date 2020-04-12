@@ -28,7 +28,6 @@ public class SimpleGAIndividual {
             webDriver.manage().window().setSize(new Dimension(500, 450));
             Thread.sleep(1000);
             DinoConstants.JUMP_SAFE_DISTANCE = chromosomeToInt();
-            System.out.println(DinoConstants.JUMP_SAFE_DISTANCE);
             return new SeleniumDino(webDriver).run();
         } catch (Exception e) {
             e.printStackTrace();
