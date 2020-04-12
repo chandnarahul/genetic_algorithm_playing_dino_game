@@ -44,28 +44,29 @@ public class DinoSensor {
     }
 
     private void findObject() {
-        int continueForFewPixels = 15;
-        int firstPixelFound = -1;
+        int firstPixelFoundAt = DinoConstants.PIXEL_NOT_FOUND;
         for (int i = 0; i < image.getWidth(); i++) {
             if (new PixelUtility(image).isAnyPixelFoundAtTop(i)) {
-                if (firstPixelFound == -1) {
-                    firstPixelFound = i;
-                    this.objectXAxisPoint = firstPixelFound;
-                }
-                objectLocation = ObjectLocation.IN_THE_SKY;
+                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, i);
+                this.objectLocation = ObjectLocation.IN_THE_SKY;
             }
             if (isAnyPixelFoundAtBottom(i)) {
-                if (firstPixelFound == -1) {
-                    firstPixelFound = i;
-                    this.objectXAxisPoint = firstPixelFound;
-                }
-                objectLocation = ObjectLocation.CLOSER_TO_THE_GROUND;
-                this.groundObjectWidth = new ObjectWidth(this.objectXAxisPoint, image).determineWidthOfTheGroundObject();
+                firstPixelFoundAt = setFirstPixelValue(firstPixelFoundAt, i);
+                this.objectLocation = ObjectLocation.CLOSER_TO_THE_GROUND;
+                this.groundObjectWidth = new ObjectWidth(this.objectXAxisPoint, this.image).determineWidthOfTheGroundObject();
             }
-            if (firstPixelFound != -1 && (i - firstPixelFound) > continueForFewPixels) {
+            if (firstPixelFoundAt != DinoConstants.PIXEL_NOT_FOUND && (i - firstPixelFoundAt) > DinoConstants.PIXELS_BUFFER) {
                 break;
             }
         }
+    }
+
+    private int setFirstPixelValue(int firstPixelFoundAt, int i) {
+        if (firstPixelFoundAt == DinoConstants.PIXEL_NOT_FOUND) {
+            firstPixelFoundAt = i;
+            this.objectXAxisPoint = i;
+        }
+        return firstPixelFoundAt;
     }
 
     public ObjectLocation objectLocation() {

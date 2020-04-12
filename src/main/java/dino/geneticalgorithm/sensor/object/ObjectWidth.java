@@ -26,7 +26,7 @@ public class ObjectWidth {
             } else {
                 pixelNotFound++;
             }
-            if (pixelNotFound > 10) {
+            if (pixelNotFound > DinoConstants.PIXELS_BUFFER) {
                 return calculateObjectWidth(lastPixelFound);
             }
         }

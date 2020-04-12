@@ -1,5 +1,7 @@
 package dino.geneticalgorithm.sensor.image;
 
+import dino.DinoConstants;
+
 import java.awt.image.BufferedImage;
 
 public class PixelUtility {
@@ -15,8 +17,7 @@ public class PixelUtility {
     }
 
     public boolean isGrayPixel(int xAxis, int yAxisBottomUp) {
-        final int grayScale = 90;
         int pixel = image.getRGB(xAxis, yAxisBottomUp) & 0xFF;
-        return pixel < grayScale;
+        return pixel < DinoConstants.GRAY_SCALE_PIXEL_COLOR;
     }
 }
